@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="DUT_EpicsValueDouble" Id="{0a11fb73-3372-4e4c-98d0-e393f1d5d024}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE DUT_EpicsValueDouble :
+STRUCT
+	stMetadata : DUT_EpicsValueMetadata;
+	fValue : LREAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="MAIN" Id="{da162ad0-7062-48a6-bca3-08f41fabfa87}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbAdsRead : Tc2_System.ADSREAD;
+	fbAdsWriteRead : Tc2_System.ADSRDDEVINFO;
+	fbSymbolInfo : PLC_ReadSymInfoByNameEx;
+	sNetId : T_AmsNetID := '134.79.165.97.1.1';
+	nPort : T_AmsPort := 851;
+	bGetInfo : BOOL;
+	bReadData : BOOL;
+	iIdx : INT;
+	stValue : DUT_EpicsValueDouble;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbSymbolInfo(
+	NETID:=sNetId,
+	PORT:=nPort,
+	SYMNAME:='random_walk:x',
+	START:=bGetInfo,
+);
+
+IF fbSymbolInfo.SYMINFO.byteSize > 0 AND fbSymbolInfo.SYMINFO.byteSize <= SIZEOF(stValue) THEN
+	fbAdsRead(
+		NETID:=sNetId,
+		PORT:=nPort,
+		IDXGRP:=fbSymbolInfo.SYMINFO.idxGroup,
+		IDXOFFS:=fbSymbolInfo.SYMINFO.idxOffset,
+		LEN:=fbSymbolInfo.SYMINFO.byteSize,
+		DESTADDR:=ADR(stValue),
+		READ:=bReadData AND NOT fbSymbolInfo.BUSY AND NOT fbSymbolInfo.ERR,
+	);
+END_IF
+
+iIdx := iIdx + 1;
+
+IF iIdx MOD 100 = 0 THEN
+	bGetInfo := NOT bGetInfo;
+	bReadData := NOT bGetInfo;
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
